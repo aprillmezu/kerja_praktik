@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kerja_praktik/screens/register_screen.dart';
+import '../admin/dashboard_admin_screen.dart';
+import '../customer/home_customer_screen.dart';
+import '../owner/dashboard_owner_screen.dart';
 import 'admin/dashboard_admin_screen.dart';
 import 'customer/home_customer_screen.dart';
 import 'owner/dashboard_owner_screen.dart';
@@ -178,3 +181,4 @@ class _LoginScreenState extends State<LoginScreen> {
 extension on Function({required Widget child, void Function()? onPressed, required dynamic style}) {
   styleFrom({required MaterialColor backgroundColor, required EdgeInsets padding, required RoundedRectangleBorder shape}) {}
 }
+// TODO Implement this library.

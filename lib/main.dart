@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kerja_praktik/screens/admin/dashboard_admin_screen.dart';
 import 'package:kerja_praktik/screens/customer/home_customer_screen.dart';
-import 'package:kerja_praktik/screens/login_screen.dart';
 import 'package:kerja_praktik/screens/owner/dashboard_owner_screen.dart';
 import 'package:kerja_praktik/screens/auth/login_screen.dart';
-import 'package:sistem_penjualan/screens/auth/register_screen.dart';
-
+import 'package:kerja_praktik/screens/auth/register_screen.dart';
 
 
 void main() {
