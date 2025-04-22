@@ -156,3 +156,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+
+extension on Function({required Widget child, void Function()? onPressed, required dynamic style}) {
+  styleFrom({required MaterialColor backgroundColor, required EdgeInsets padding, required RoundedRectangleBorder shape}) {}
+}
+
+ElevatedButton({void Function()? onPressed, required style, required Widget child}) {
+}
