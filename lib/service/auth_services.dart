@@ -1,48 +1,23 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:kerja_praktik/models/user_model.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final String loginUrl = 'https://example.com/api/login'; // Ganti sesuai API
 
-  // Register user
-  Future<User?> registerWithEmailAndPassword(String email, String password) async {
-    try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return result.user;
-    } catch (e) {
-      print("Register Error: $e");
-      return null;
+  Future<UserModel> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse(loginUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      return UserModel.fromJson(jsonData['user']);
+    } else {
+      throw Exception('Login gagal');
     }
-  }
-
-  // Login user
-  Future<User?> loginWithEmailAndPassword(String email, String password) async {
-    try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return result.user;
-    } catch (e) {
-      print("Login Error: $e");
-      return null;
-    }
-  }
-
-  // Logout user
-  Future<void> signOut() async {
-    await _auth.signOut();
-  }
-
-  // Get current user
-  User? getCurrentUser() {
-    return _auth.currentUser;
-  }
-
-  // Auth state changes (realtime listener)
-  Stream<User?> get authStateChanges {
-    return _auth.authStateChanges();
   }
 }
+// TODO Implement this library.

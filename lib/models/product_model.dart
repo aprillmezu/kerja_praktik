@@ -1,37 +1,69 @@
-class Product {
+class ProductModel {
   final String id;
   final String name;
+  final String description;
   final double price;
-  final int stock;
-  final String category;
+  final double rentalPrice;
+  final bool isAvailable;
+  final ProductType type; // jual atau sewa
   final String imageUrl;
 
-  Product({
+  ProductModel({
     required this.id,
     required this.name,
+    required this.description,
     required this.price,
-    required this.stock,
-    required this.category,
+    required this.rentalPrice,
+    required this.isAvailable,
+    required this.type,
     required this.imageUrl,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'].toString(),
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      id: json['id'],
       name: json['name'],
-      price: double.tryParse(json['price'].toString()) ?? 0.0,
-      stock: json['stock'],
-      category: json['category'],
-      imageUrl: json['image_url'],
+      description: json['description'],
+      price: json['price'].toDouble(),
+      rentalPrice: json['rentalPrice'].toDouble(),
+      isAvailable: json['isAvailable'],
+      type: ProductTypeExtension.fromString(json['type']),
+      imageUrl: json['imageUrl'],
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
+    'description': description,
     'price': price,
-    'stock': stock,
-    'category': category,
-    'image_url': imageUrl,
+    'rentalPrice': rentalPrice,
+    'isAvailable': isAvailable,
+    'type': type.name,
+    'imageUrl': imageUrl,
   };
+}
+
+enum ProductType { jual, sewa }
+
+extension ProductTypeExtension on ProductType {
+  static ProductType fromString(String type) {
+    switch (type.toLowerCase()) {
+      case 'jual':
+        return ProductType.jual;
+      case 'sewa':
+        return ProductType.sewa;
+      default:
+        throw Exception('Unknown product type');
+    }
+  }
+
+  String get name {
+    switch (this) {
+      case ProductType.jual:
+        return 'jual';
+      case ProductType.sewa:
+        return 'sewa';
+    }
+  }
 }
