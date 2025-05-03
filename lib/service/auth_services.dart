@@ -1,39 +1,48 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  final String baseUrl = 'https://your-api-url.com/api';
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Login
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body); // misalnya berisi token dan data user
-    } else {
-      throw Exception('Gagal login');
+  // Register user
+  Future<User?> registerWithEmailAndPassword(String email, String password) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.user;
+    } catch (e) {
+      print("Register Error: $e");
+      return null;
     }
   }
 
-  // Register (opsional)
-  Future<bool> register(String name, String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': name,
-        'email': email,
-        'password': password,
-      }),
-    );
+  // Login user
+  Future<User?> loginWithEmailAndPassword(String email, String password) async {
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.user;
+    } catch (e) {
+      print("Login Error: $e");
+      return null;
+    }
+  }
 
-    return response.statusCode == 201;
+  // Logout user
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
+
+  // Get current user
+  User? getCurrentUser() {
+    return _auth.currentUser;
+  }
+
+  // Auth state changes (realtime listener)
+  Stream<User?> get authStateChanges {
+    return _auth.authStateChanges();
   }
 }

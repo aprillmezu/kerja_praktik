@@ -1,30 +1,56 @@
-class ProductModel {
-  final int? id;
-  final String name;
-  final String description;
-  final double price;
-  final int stock;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/product_model.dart';
 
-  ProductModel({
-    this.id,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.stock,
-  });
+class ProductService {
+  final CollectionReference _productRef =
+  FirebaseFirestore.instance.collection('products');
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-    id: json['id'],
-    name: json['name'],
-    description: json['description'],
-    price: json['price'].toDouble(),
-    stock: json['stock'],
-  );
+  // Tambah produk
+  Future<void> addProduct(Product product) async {
+    try {
+      await _productRef.add(product.toMap());
+    } catch (e) {
+      print("Error saat menambahkan produk: $e");
+    }
+  }
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'description': description,
-    'price': price,
-    'stock': stock,
-  };
+  // Update produk
+  Future<void> updateProduct(Product product) async {
+    try {
+      await _productRef.doc(product.id).update(product.toMap());
+    } catch (e) {
+      print("Error saat mengupdate produk: $e");
+    }
+  }
+
+  // Hapus produk
+  Future<void> deleteProduct(String id) async {
+    try {
+      await _productRef.doc(id).delete();
+    } catch (e) {
+      print("Error saat menghapus produk: $e");
+    }
+  }
+
+  // Ambil semua produk (real-time stream)
+  Stream<List<Product>> getProducts() {
+    return _productRef.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Product.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }).toList();
+    });
+  }
+
+  // Ambil satu produk berdasarkan ID
+  Future<Product?> getProductById(String id) async {
+    try {
+      DocumentSnapshot doc = await _productRef.doc(id).get();
+      if (doc.exists) {
+        return Product.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }
+    } catch (e) {
+      print("Error saat mengambil produk: $e");
+    }
+    return null;
+  }
 }
